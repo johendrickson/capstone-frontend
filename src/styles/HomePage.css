@@ -1,0 +1,24 @@
+.home-content {
+  display: grid;
+  grid-template-rows: 1fr 3fr;
+  padding: 2rem;
+  text-align: left;
+}
+
+.home-content h1 {
+    margin-bottom: 1rem;
+}
+
+.home-content h1,
+.home-content p {
+  color: white; /* ensures text is readable against the background */
+}
+.home-page {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.home-page .page {
+    background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0));
+}

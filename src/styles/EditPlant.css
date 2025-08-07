@@ -1,0 +1,7 @@
+.EditPlant .plant-image {
+  width: 7.5em;
+  height: 7.5em;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}

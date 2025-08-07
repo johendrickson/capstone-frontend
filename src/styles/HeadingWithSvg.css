@@ -1,0 +1,15 @@
+.heading-with-icon .icon-offset-point {
+  display: inline-block;
+  position: relative;
+  height: 0;
+  width: 0;
+}
+
+.heading-with-icon img,
+.heading-with-icon svg {
+  width: 0.8ch;
+  height: 0.8ch;
+  position: absolute;
+  top: -1.5ch;
+  left: -0.1ch;
+}

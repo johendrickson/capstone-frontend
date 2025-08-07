@@ -1,0 +1,54 @@
+.About.page {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.About .split-pane {
+  font-family: sans-serif;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* LEFT SIDE: blur with backdrop-filter */
+.About .reading-pane {
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent black overlay */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+/* Text container */
+.About .left-content {
+  color: white;
+  padding: 3rem 4rem;
+  text-align: left;
+  line-height: 1.9;
+}
+
+/* Spacing for paragraphs, headers, and lists */
+.About .left-content p,
+.About .left-content ul,
+.About .left-content h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.About .left-content h2 {
+  margin-top: 2.5rem;
+}
+
+.About .left-content ul li {
+  margin-bottom: 1rem;
+}
+
+/* HEADERS */
+.About .left-content h1,
+.About .left-content h2 {
+  margin-bottom: 1rem;
+}
+
+/* RIGHT SIDE: clear image portion */
+.About .right-pane {
+  flex: 1;
+}

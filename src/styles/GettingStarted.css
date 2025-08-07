@@ -1,0 +1,56 @@
+/* Target only Getting Started page container */
+.GettingStarted.page {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  color: white;
+  display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  flex-direction: column; /* or row, depending on layout */
+}
+
+.GettingStarted .split-pane {
+  font-family: sans-serif;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.GettingStarted .reading-pane {
+    grid-column: 2;
+  background: rgba(0, 0, 0, 0.5); /* semi-transparent black overlay */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+/* Text container */
+.GettingStarted .reading-pane {
+  color: white;
+  padding: 3rem 4rem;
+  text-align: left;
+  line-height: 1.9;
+}
+
+/* Spacing for paragraphs, headers, and lists */
+.GettingStarted .reading-pane p,
+.GettingStarted .reading-pane ol,
+.GettingStarted .reading-pane h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.GettingStarted .reading-pane h2 {
+  margin-top: 2.5rem;
+}
+
+.GettingStarted .reading-pane ol li {
+  margin-bottom: 1rem;
+}
+
+/* HEADERS */
+.GettingStarted .reading-pane h1,
+.GettingStarted .reading-pane h2 {
+  margin-bottom: 1rem;
+}

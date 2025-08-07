@@ -1,0 +1,154 @@
+.AddPlant .container {
+  max-width: 480px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.AddPlant h1 {
+  margin-bottom: 1.25rem;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.AddPlant form {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  max-width: 25em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.AddPlant .checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.AddPlant .error-message {
+  color: #e53e3e;
+  font-weight: 600;
+  margin-top: -0.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.AddPlant label {
+  text-align: right;
+}
+
+.AddPlant input[type="checkbox"] {
+  justify-self: start;
+}
+
+.AddPlant .bottom-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  grid-column: 1 / span 2; /* span both columns */
+}
+
+.AddPlant .suggestions ul {
+  border: rgba(0, 0, 0, 0.5) solid 1px;
+}
+
+.AddPlant .suggestions-info {
+  display: block;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0.2em 0;
+}
+
+.AddPlant .suggestions li {
+  list-style: none;
+}
+
+.AddPlant .suggestions li:hover {
+  cursor: pointer;
+}
+
+.AddPlant .suggestions li button {
+  display: block;
+  background-color: inherit;
+  border-radius: 0;
+  width: 100%;
+  text-align: start;
+}
+
+.AddPlant .suggestions li button:focus {
+  background-color: rgba(60, 194, 60, 0.5);
+}
+
+.AddPlant .suggestions li button:hover {
+  background-color: rgba(60, 194, 60, 0.3);
+}
+
+.AddPlant input[type="url"] {
+  font-family: monospace;
+}
+
+.AddPlant .tag-selector {
+  grid-column: span 2;
+}
+
+/* Add Plant: Container for image and scientific name input */
+.AddPlant .image-scientific-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Add Plant: Circular image frame */
+.AddPlant .plant-image-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  position: relative;
+}
+
+/* Add Plant: Image inside the circle */
+.AddPlant .plant-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Add Plant: Wrapper around scientific name input + autofill */
+.AddPlant .scientific-name-input-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Add Plant: Controls shown when editing image URL manually */
+.AddPlant .image-edit-controls {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.AddPlant.scientific-name-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between input and button */
+}
+
+.AddPlant.edit-image-button {
+  flex-shrink: 0; /* prevent button from shrinking */
+  /* remove any absolute/fixed positioning */
+  position: static !important;
+  margin: 0;
+}
+

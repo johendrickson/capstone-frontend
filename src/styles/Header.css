@@ -1,0 +1,36 @@
+/* Header background */
+.App-header {
+  background-color: rgb(60, 194, 60);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  font-weight: bold;
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.1); */
+  color: white; /* make text inside header white for contrast */
+}
+
+.App-header.no-icon {
+  background-color: inherit;
+  justify-content: end;
+}
+
+.App-header.no-icon .nav-box {
+  background-color: rgb(60, 194, 60);
+}
+
+.App-header .site-logo-and-name {
+  display: flex;
+  align-items: center;
+  gap: 0.3ch;
+  margin: 0.3ch;
+}
+
+.App-header .site-logo-and-name img {
+  max-width: 12em;
+}
+
+.App-header .site-logo-and-name span {
+  color: white;
+  font-weight: bold;
+  font-size: 1.6em;
+}

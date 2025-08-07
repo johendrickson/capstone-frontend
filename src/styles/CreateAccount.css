@@ -1,0 +1,28 @@
+.CreateAccountPage .fields {
+    margin: 2em;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 1em;
+    row-gap: 2em;
+}
+
+.CreateAccountPage .fields input {
+    font-style: italic;
+}
+
+.CreateAccountPage h1 {
+    text-align: center;
+}
+
+.CreateAccountPage label {
+    text-align: end;
+}
+
+.CreateAccountPage .submit-button {
+    text-align: center;
+}
+
+.CreateAccountPage form {
+    max-width: 25em;
+    margin: 0 auto;
+}

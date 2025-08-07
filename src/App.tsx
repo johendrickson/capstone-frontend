@@ -1,23 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import About from './pages/About';
+import CreateAccount from './pages/CreateAccount';
+import Login from './pages/Login';
+import GettingStarted from './pages/GettingStarted';
+import Dashboard from './pages/Dashboard';
+import AddPlant from './pages/AddPlant';
+import EditPlant from './pages/EditPlant';
+import WateringReminders from './pages/WateringReminders';
+import WeatherAlerts from './pages/WeatherAlerts';
+import Settings from './pages/Settings';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="main logo" />
-        <span>Plant Pal</span>
-      </header>
-      <main>
-        <h1>Welcome</h1>
-        <p>
-          Here's some starter text where I will welcome you wholeheartedly and with fun and cool design.
-        </p>
-      </main>
-      <footer>
-        <p>A project by Jamie</p>
-      </footer>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/create-account" element={<CreateAccount />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/getting-started" element={<GettingStarted />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/plants/add" element={<AddPlant />} />
+          <Route path="/plants/:id/edit" element={<EditPlant />} />
+          <Route path="/watering-reminders" element={<WateringReminders />} />
+          <Route path="/weather-alerts" element={<WeatherAlerts />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

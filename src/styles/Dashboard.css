@@ -1,0 +1,23 @@
+.weather-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.weather-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.garden-icon {
+  max-width: 50px;
+
+}
+.plant-image {
+  width: 150px;      /* fixed width */
+  height: 150px;     /* fixed height to keep square */
+  object-fit: cover; /* crop/scale image to fill without distortion */
+  border-radius: 8px; /* optional: rounded corners for a nice look */
+  display: block;    /* ensure no inline spacing issues */
+}

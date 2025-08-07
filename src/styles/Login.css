@@ -1,0 +1,25 @@
+.LoginPage .login-or-create > span {
+    display: block;
+}
+
+.LoginPage input[type="email"] {
+    /* border-color: black;
+    border-width: 3px; */
+    font-size: 1em;
+}
+
+.LoginPage input[type="email"]:placeholder-shown {
+    font-style: italic;
+}
+
+.LoginPage main {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.LoginPage .fields {
+    margin: 1.5em;
+    display: flex;
+    gap: 0.5em;
+    justify-content: center;
+}
