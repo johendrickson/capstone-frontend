@@ -179,10 +179,11 @@ function Dashboard() {
 
         {userId && (
           <>
-            <h2 style={{ marginTop: "2rem" }}>Water Today</h2>
+            <h2>Water Today</h2>
             {/* Future list of plants to water can go here */}
+            <div>Info not populated here...yet!</div>
 
-            <h2 style={{ marginTop: "2rem" }}>Plants</h2>
+            <h2>Plants</h2>
             <img src={gardenIcon} alt="Garden icon" className="garden-icon" />
 
             {/* 🔍 Search UI */}

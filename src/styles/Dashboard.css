@@ -1,23 +1,49 @@
-.weather-section {
+.Dashboard h1 {
+  margin-bottom: 2rem;
+}
+
+.Dashboard h2 {
+  margin-top: 2rem;
+  margin-bottom: 1.3rem;
+}
+
+.Dashboard .weather-section {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.weather-icon {
+.Dashboard .weather-icon {
   width: 30px;
   height: 30px;
 }
 
-.garden-icon {
+.Dashboard .garden-icon {
   max-width: 50px;
-
 }
-.plant-image {
-  width: 150px;      /* fixed width */
-  height: 150px;     /* fixed height to keep square */
+
+.Dashboard .search-bar {
+  margin-top: 1em;
+}
+
+.Dashboard .plant-details {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+.Dashboard .plant-image {
+  width: 100%;      /* fixed width */
+  aspect-ratio: 1;
   object-fit: cover; /* crop/scale image to fill without distortion */
   border-radius: 8px; /* optional: rounded corners for a nice look */
   display: block;    /* ensure no inline spacing issues */
+}
+
+.Dashboard .plant-gallery {
+  margin-top: 3em;
+  max-width: 60em;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8em, 10em));
+  gap: 2em;
 }
