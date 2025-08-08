@@ -4,7 +4,7 @@ import type { UserPlant, UserPlantInput } from "../pages/types";
 export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export const getUserPlants = async (userId: number): Promise<UserPlant[]> => {
-  const res = await axios.get(`${API_BASE_URL}/user_plants`, { params: { user_id: userId } });
+  const res = await axios.get(`${API_BASE_URL}/user_plants/all/${userId}`);
   return res.data.user_plants;
 };
 

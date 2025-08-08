@@ -107,7 +107,8 @@ function SettingsPage() {
               value={formData.zip_code}
               onChange={handleChange}
             />
-            <small style={{ display: "block", marginTop: "0.5rem", color: "#666" }}>
+            <div className="empty"></div>
+            <small>
               Might render outdated data briefly after zip code updates.
             </small>
 
@@ -131,9 +132,10 @@ function SettingsPage() {
         <div className="delete-account">
           <button onClick={handleDelete} className="danger-button">
             Delete My Account
+            {' '}
+            <img src={settingsIcon} alt="Snippers Icon" className="settings-icon" />
           </button>
         </div>
-        <img src={settingsIcon} alt="Settings Icon" className="settings-icon" />
       </main>
       <FooterBanner />
     </div>

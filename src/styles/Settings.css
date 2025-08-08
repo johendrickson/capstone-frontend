@@ -1,0 +1,22 @@
+.SettingsPage .fields {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  max-width: 30em;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1em;
+  row-gap: 0.7em;
+}
+
+.SettingsPage small {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.SettingsPage form {
+  margin-bottom: 1rem;
+}
+
+.SettingsPage .danger-button img {
+  max-width: 1em;
+}

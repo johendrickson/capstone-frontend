@@ -1,8 +1,4 @@
 .nav {
-  position: fixed;
-  top: 1.5rem;
-  right: 0;           /* flush right */
-  z-index: 1000;
   display: flex;
   justify-content: flex-end;
   height: 50px;
@@ -13,7 +9,10 @@
 
 .nav-box {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  column-gap: 2rem;
+  row-gap: 0.8rem;
   background-color: rgb(60, 194, 60);
   border-radius: 0 0 0 12px; /* round only left corners */
   font-size: 1.4rem;
@@ -25,7 +24,6 @@
   box-sizing: border-box;
   min-height: 2em;
   min-width: 200px;    /* enough width for text */
-  white-space: nowrap; /* prevent wrapping */
   margin-right: 0;     /* no margin on right */
 }
 

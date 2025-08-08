@@ -195,6 +195,12 @@ export default function AddPlant() {
     }
   };
 
+  const handleDraftImageUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setDraftImageUrl(url);
+    setFormData({ ...formData, image_url: url });
+  };
+
   const handleTagChange = (selectedTagIds: number[]) => {
     setFormData((prev) => ({ ...prev, tag_ids: selectedTagIds }));
   };

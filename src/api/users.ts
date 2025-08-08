@@ -8,6 +8,8 @@ export interface UserProfile {
   email?: string;
   zip_code?: string;
   garden_name?: string;
+  weather_alerts_enabled?: boolean;
+  watering_reminders_enabled?: boolean;
 }
 
 export const getUserProfile = async (userId: number): Promise<UserProfile> => {

@@ -14,5 +14,3 @@ export async function getLatLonForZip(zip_code: string): Promise<{ lat: number; 
     lon: data.lon,
   };
 }
-
-export {}
