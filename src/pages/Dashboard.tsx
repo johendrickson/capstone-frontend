@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserPlants, deleteUserPlant, API_BASE_URL } from "../api/plants";
+import { getUserPlants, deleteUserPlant } from "../api/plants";
 import type { UserPlant } from "./types";
 import FooterBanner from "../components/FooterBanner";
 import Header from "../components/Header";
 import "../styles/Dashboard.css";
 import HeadingWithSvg from "../components/HeadingWithSvg";
 import { getUserProfile } from "../api/users";
+import { defaultPlantIcon } from "../constants/images";
+import { API_BASE_URL } from "../constants/api";
 
 const weatherIcon = '/assets/weather.svg';
 const gardenIcon = '/assets/garden.svg';
-const defaultPlantIcon = '/assets/default-plant.svg';
 const addPlantIcon = '/assets/add-plant-icon.svg';
 
 type Tag = {
@@ -21,6 +22,27 @@ type Tag = {
 function Dashboard() {
   const userId = localStorage.getItem("plantpal_user_id");
   const navigate = useNavigate();
+
+  const scrollRef = useRef(null);
+  const [isWaterTodayLeftScrollAvail, setIsWaterTodayLeftScrollAvail] = useState(false);
+  const [isWaterTodayRightScrollAvail, setIsWaterTodayRightScrollAvail] = useState(false);
+
+  const handleScroll = () => {
+    if (scrollRef.current) {
+      const { scrollLeft, scrollLeftMax } = scrollRef.current;
+
+      const isLeftScrollAvailable = scrollLeft !== 0;
+      const isRightScrollAvailable = scrollLeft !== scrollLeftMax;
+
+      if (isLeftScrollAvailable !== isWaterTodayLeftScrollAvail) {
+        setIsWaterTodayLeftScrollAvail(isLeftScrollAvailable);
+      }
+
+      if (isRightScrollAvailable !== isWaterTodayRightScrollAvail) {
+        setIsWaterTodayRightScrollAvail(isRightScrollAvailable);
+      }
+    }
+  };
 
   const [plants, setPlants] = useState<UserPlant[]>([]);
   const [filteredPlants, setFilteredPlants] = useState<UserPlant[]>([]);
@@ -46,6 +68,7 @@ function Dashboard() {
         .then((data) => {
           setPlants(data);
           setFilteredPlants(data);
+          setError(null);
         })
         .catch((err) => {
           console.error(err);
@@ -148,6 +171,21 @@ function Dashboard() {
     setFilteredPlants(filtered);
   }, [searchTerm, selectedTag, plants]);
 
+  const plantsThatNeedWaterToday = plants.filter((userPlant) => {
+    const wateringSchedule = userPlant.watering_schedule;
+
+    if (!wateringSchedule) return false;
+
+    const lastWateredDate = new Date(wateringSchedule.last_watered);
+    const nextWateredDay: number = lastWateredDate.getDay() + wateringSchedule.frequency_days;
+    const todayDay: number = new Date().getDay();
+
+    return (
+      nextWateredDay === todayDay
+      || lastWateredDate.getDay() === todayDay
+    );
+  });
+
   const handleDelete = async (plantId: number) => {
     const confirmed = window.confirm("Are you sure you want to delete this plant?");
     if (confirmed) {
@@ -170,6 +208,14 @@ function Dashboard() {
           Welcome to your plant dashboard, {name || "Gardener"}! Manage your plants, explore care options, and help them thrive.
         </p>
 
+        {
+          error && (
+            <div>
+              <p>{error}</p>
+            </div>
+          )
+        }
+
         {weather && (
           <div className="weather-section">
             <p className="weather-display">{weather}</p>
@@ -181,7 +227,37 @@ function Dashboard() {
           <>
             <h2>Water Today</h2>
             {/* Future list of plants to water can go here */}
-            <div>Info not populated here...yet!</div>
+            {
+              loading && plants.length === 0 && (
+                <div>
+                  <p>Loading...</p>
+                </div>
+              )
+            }
+            {
+              plantsThatNeedWaterToday.length > 0 && (
+                <ul
+                  className={`water-today ${isWaterTodayLeftScrollAvail && isWaterTodayRightScrollAvail ? 'both-available' : (isWaterTodayLeftScrollAvail ? 'left-available' : (isWaterTodayRightScrollAvail ? 'right-available' : ''))}`}
+                  onScroll={handleScroll}
+                  ref={scrollRef}
+                >
+                  {
+                    plantsThatNeedWaterToday.map(userPlant => (
+                      <li>
+                        <img
+                          src={userPlant.plant?.image_url || defaultPlantIcon}
+                          alt=''
+                        />
+                        {userPlant.plant?.common_name || userPlant.plant?.scientific_name || "Plant"}
+                      </li>
+                    ))
+                  }
+                </ul>
+              )
+            }
+            <ul>
+
+            </ul>
 
             <h2>Plants</h2>
             <img src={gardenIcon} alt="Garden icon" className="garden-icon" />

@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
+import { API_BASE_URL } from "../constants/api";
 
 export async function getLatLonForZip(zip_code: string): Promise<{ lat: number; lon: number }> {
   const response = await fetch(`${API_BASE_URL}/geocode?zip_code=${zip_code}`);

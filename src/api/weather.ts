@@ -1,6 +1,7 @@
+import { API_BASE_URL } from "../constants/api";
+
 export async function getWeather(zip: string) {
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || "";
-  const res = await fetch(`${apiBaseUrl}/weather?zip=${zip}`);
+  const res = await fetch(`${API_BASE_URL}/weather?zip=${zip}`);
 
   if (!res.ok) {
     const text = await res.text();

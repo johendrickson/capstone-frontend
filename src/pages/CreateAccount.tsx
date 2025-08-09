@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import FooterBanner from '../components/FooterBanner';
 import HeadingWithSvg from '../components/HeadingWithSvg';
-import '../styles/CreateAccount.css';
 import Header from '../components/Header';
+import '../styles/CreateAccount.css';
+import { API_BASE_URL } from '../constants/api';
 
 function CreateAccountPage() {
   const navigate = useNavigate();
@@ -29,7 +30,6 @@ function CreateAccountPage() {
     e.preventDefault();
 
     try {
-      const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
       const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',

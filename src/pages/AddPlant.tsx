@@ -8,6 +8,7 @@ import '../styles/AddPlant.css';
 import FooterBanner from '../components/FooterBanner';
 import { fetchPlantInfo, fetchScientificNameSuggestions } from '../api/gemini';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../constants/api';
 
 interface AddPlantFormData {
   user_id: number;
@@ -24,7 +25,6 @@ interface AddPlantFormData {
   tag_ids: number[];
 }
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
 
 export default function AddPlant() {

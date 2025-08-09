@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+import { API_BASE_URL } from "../constants/api";
+
 
 export async function fetchPlantInfo(scientificName: string) {
   const response = await fetch(`${API_BASE_URL}/gemini`, {

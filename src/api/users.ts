@@ -1,6 +1,6 @@
 import axios from "axios";
+import { API_BASE_URL } from "../constants/api";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export interface UserProfile {
   id: number;

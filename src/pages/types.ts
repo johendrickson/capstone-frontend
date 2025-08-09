@@ -12,12 +12,19 @@ export interface UserPlantInput {
   tag_ids: number[];
 }
 
+export type WateringSchedule = {
+  frequency_days: number;
+  id: number;
+  last_watered: string;
+}
+
 export interface UserPlant extends UserPlantInput {
   id: number;
   user_id: number;
   tags: Tag[];
   planted_date: string;
   plant: PlantInfo; // nested plant info from API
+  watering_schedule?: WateringSchedule;
 }
 
 // Plant info data (scientific/common names, etc)

@@ -5,8 +5,8 @@ import FooterBanner from '../components/FooterBanner';
 import '../styles/WeatherAlerts.css';
 import axios from 'axios';
 import { getUserProfile } from '../api/users';
+import { API_BASE_URL } from '../constants/api';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 const weatherAlertIcon = '/assets/snow.svg';
 
 export default function WeatherAlerts() {

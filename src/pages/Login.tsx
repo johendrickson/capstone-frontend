@@ -4,8 +4,8 @@ import FooterBanner from '../components/FooterBanner';
 import Header from '../components/Header';
 import HeadingWithSvg from '../components/HeadingWithSvg';
 import '../styles/Login.css';
+import { API_BASE_URL } from '../constants/api';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 function LoginPage() {
   const navigate = useNavigate();

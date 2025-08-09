@@ -25,6 +25,7 @@
   min-height: 2em;
   min-width: 200px;    /* enough width for text */
   margin-right: 0;     /* no margin on right */
+  align-self: center;
 }
 
 /* Links styling */

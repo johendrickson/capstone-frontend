@@ -7,8 +7,8 @@ import HeadingWithSvg from '../components/HeadingWithSvg';
 import '../styles/EditPlant.css';
 import FooterBanner from '../components/FooterBanner';
 import { useNavigate, useParams } from 'react-router-dom';
+import { API_BASE_URL } from '../constants/api';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
 
 interface Plant {

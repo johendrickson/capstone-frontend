@@ -23,6 +23,39 @@
   margin-top: 1em;
 }
 
+.Dashboard ul.water-today {
+  padding: 1em;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2em;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.Dashboard ul.water-today.both-available {
+  background: linear-gradient(to right, #888, white 3%, white 97%, #888 100%);
+}
+
+.Dashboard ul.water-today.right-available {
+  background: linear-gradient(to right, white, white 97%, #888 100%);
+}
+
+.Dashboard ul.water-today.left-available {
+  background: linear-gradient(to right, #888, white 3%, white 100%);
+}
+
+.Dashboard ul.water-today li {
+  display: grid;
+  grid-template-columns: 8em;
+  grid-template-rows: auto auto;
+}
+
+.Dashboard ul.water-today li img {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
 .Dashboard .plant-details {
   margin-top: 0.2em;
   margin-bottom: 0.2em;

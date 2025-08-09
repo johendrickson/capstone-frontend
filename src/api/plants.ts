@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { UserPlant, UserPlantInput } from "../pages/types";
+import { API_BASE_URL } from "../constants/api";
 
-export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
 export const getUserPlants = async (userId: number): Promise<UserPlant[]> => {
   const res = await axios.get(`${API_BASE_URL}/user_plants/all/${userId}`);

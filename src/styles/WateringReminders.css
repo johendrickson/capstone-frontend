@@ -1,3 +1,7 @@
+.watering-reminders-page h2 {
+  margin-bottom: 2em;
+}
+
 .watering-reminders-page .error-msg {
   color: darkred;
 }
@@ -127,6 +131,7 @@
   width: 15em;
   aspect-ratio: 1;
   grid-column: span 2;
+  border-radius: 1em;
 }
 
 .watering-reminders-page .user-plant-schedules ul {
@@ -147,4 +152,12 @@
 
 .watering-reminders-page .reminder-tile.loading {
   background-color: lightgray;
+}
+
+.watering-reminders-page .new-watering-reminder {
+  margin-top: 3em;
+  margin-bottom: 3em;
+  padding: 3em;
+
+  background-color: whitesmoke;
 }
