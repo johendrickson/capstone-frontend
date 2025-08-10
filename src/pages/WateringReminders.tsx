@@ -2,7 +2,6 @@ import React, { useState, useEffect, FormEvent } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import HeadingWithSvg from '../components/HeadingWithSvg';
-import InfoText from '../components/InfoText';
 import FooterBanner from '../components/FooterBanner';
 import '../styles/WateringReminders.css';
 import { getUserProfile } from '../api/users';
