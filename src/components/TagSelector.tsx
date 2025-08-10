@@ -88,15 +88,14 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   const MultiValueRemove = () => null;
 
   return (
-    <div className="mb-4">
-      <label className="block mb-2 font-bold">Tags</label>
+    <div className="tags-container">
+      <label>Tags</label>
       <CreatableSelect
         isMulti
         options={options}
         value={selectedOptions}
         onChange={handleChange}
         components={{ MultiValueLabel, MultiValueRemove }}
-        className="text-black"
         placeholder="Type to add or select tags..."
         noOptionsMessage={() => 'Type to add new tag'}
       />

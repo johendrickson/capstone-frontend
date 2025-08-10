@@ -255,9 +255,14 @@ function Dashboard() {
                 </ul>
               )
             }
-            <ul>
+            {
+              !loading && plants.length === 0 && (
+                <div>
+                  <p>No plants to water today. The only one you must keep hydrated is yourself. 😎</p>
+                </div>
+              )
+            }
 
-            </ul>
 
             <h2>Plants</h2>
             <img src={gardenIcon} alt="Garden icon" className="garden-icon" />
