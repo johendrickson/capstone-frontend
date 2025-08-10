@@ -57,12 +57,11 @@ export default function WeatherAlerts() {
       <main>
         <HeadingWithSvg text="Weather Alerts" />
         <p>Stay informed about weather conditions that may affect your plants.</p>
-        <p>Current zip code: {zipCode || 'Not set'}</p>
-
         <p>
           You'll receive notifications via email when your zip code is expecting extreme conditions like frost, heat waves, cold snaps, or dry heat.
-          These alerts are based on NOAA forecasts and local weather data, and they’ll help you take action to protect your plants in time.
+          These alerts are based on daily forecasts and local weather data, and they’ll help you take action to protect your plants in time.
         </p>
+        <p>Current zip code: {zipCode || 'Not set'}</p>
 
         <div className="alert-toggle">
           <label className="toggle-switch">
