@@ -244,6 +244,30 @@ export default function AddPlant() {
     }
   };
 
+  const handleDraftImageFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = reader.result as string;
+      setDraftImageUrl(result);
+      if (formData) setFormData({ ...formData, image_url: result });
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSaveImageEdit = () => {
+    setIsEditingImage(false);
+  };
+
+  const handleCancelImageEdit = () => {
+    setDraftImageUrl(originalImageUrl);
+    if (formData) setFormData({ ...formData, image_url: originalImageUrl });
+    setIsEditingImage(false);
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -319,22 +343,22 @@ export default function AddPlant() {
                 placeholder="https://example.com/plant.jpg"
               />
 
-              {/* <label htmlFor="image_file_input">Or Upload an Image</label>
+              <label htmlFor="image_file_input">Or Upload an Image</label>
               <input
                 id="image_file_input"
                 type="file"
                 accept="image/*"
                 onChange={handleDraftImageFileChange}
-              /> */}
+              />
 
-              {/* <div className="image-edit-buttons">
+              <div className="image-edit-buttons">
                 <button type="button" onClick={handleSaveImageEdit}>
                   Save
                 </button>
                 <button type="button" onClick={handleCancelImageEdit}>
                   Cancel
                 </button>
-              </div> */}
+              </div>
             </div>
           )}
 

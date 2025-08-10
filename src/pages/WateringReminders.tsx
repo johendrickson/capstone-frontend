@@ -151,7 +151,7 @@ export default function WateringReminders() {
     });
 
     await axios.patch(`${API_BASE_URL}/watering_schedules/${wateringScheduleId}`, {
-      water_every_days: days,
+      frequency_days: days,
     })
     .then((data) => {
       setWateringFrequencies({
@@ -276,7 +276,7 @@ export default function WateringReminders() {
                     setNewReminderUserPlantId(parseInt(e.target.value))
                   }}
                 >
-                  <option value="">choose a plant</option>
+                  <option value="">Choose a plant</option>
                   {
                     userPlantsWithNoReminders.map(userPlant => {
 
@@ -347,7 +347,7 @@ export default function WateringReminders() {
                     <li>
                       <div className='user-plant-desc'>
                         <dl>
-                          <dt>Plant</dt>
+                          <dt>Plant:</dt>
                           <dd>{userPlant.plant.scientific_name}</dd>
                           <img
                             src={userPlant.plant.image_url || defaultPlantIcon}
