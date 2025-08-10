@@ -45,7 +45,11 @@ export default function WeatherAlerts() {
     const newValue = !alertsEnabled;
     setAlertsEnabled(newValue);
 
-    axios.patch(`${API_BASE_URL}/users/${userId}`, { weather_alerts_enabled: newValue }, { withCredentials: true })
+    axios.patch(
+      `${API_BASE_URL}/users/${userId}`,
+      { weather_alerts_enabled: newValue },
+      { withCredentials: true },
+    )
       .catch(err => {
         console.error('Failed to update weather alert setting:', err);
       });
@@ -56,10 +60,10 @@ export default function WeatherAlerts() {
       <Header displaysPlantPalIcon={true} />
       <main>
         <HeadingWithSvg text="Weather Alerts" />
-        <p>Stay informed about weather conditions that may affect your plants.</p>
+        <p>Stay one step ahead of the weather so your plants can thrive.</p>
         <p>
-          You'll receive notifications via email when your zip code is expecting extreme conditions like frost, heat waves, cold snaps, or dry heat.
-          These alerts are based on daily forecasts and local weather data, and they’ll help you take action to protect your plants in time.
+          When your zip code is forecasted for extreme conditions—like frost, heat waves, cold snaps, or dry heat—you’ll get an email alert with enough time to protect your plants.
+          These alerts are based on daily forecasts and local weather data.
         </p>
         <p>Current zip code: {zipCode || 'Not set'}</p>
 
@@ -84,7 +88,7 @@ export default function WeatherAlerts() {
         }
 
         <p className="email-note">
-          Alerts will be sent to your registered email address.
+          Alerts will be sent to the email address linked to your account.
         </p>
 
         <img src={weatherAlertIcon} alt="Weather Alert Icon" className="weather-alert-icon" />
