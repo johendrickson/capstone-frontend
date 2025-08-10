@@ -45,7 +45,7 @@ export default function WeatherAlerts() {
     const newValue = !alertsEnabled;
     setAlertsEnabled(newValue);
 
-    axios.patch(`${API_BASE_URL}/api/user/weather-alerts`, { weather_alerts_enabled: newValue }, { withCredentials: true })
+    axios.patch(`${API_BASE_URL}/users/${userId}`, { weather_alerts_enabled: newValue }, { withCredentials: true })
       .catch(err => {
         console.error('Failed to update weather alert setting:', err);
       });
