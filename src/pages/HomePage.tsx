@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import '../styles/HomePage.css';
 
 export default function HomePage() {
-  const backgroundUrl = '/assets/nature_glow.jpg'; // Ensure this image is in your public/assets folder
+  const backgroundUrl = '/assets/sunlit-branch';
 
   return (
     <div
