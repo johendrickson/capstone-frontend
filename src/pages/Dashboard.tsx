@@ -29,10 +29,21 @@ function Dashboard() {
 
   const handleScroll = () => {
     if (scrollRef.current) {
-      const { scrollLeft, scrollLeftMax } = scrollRef.current;
+      // console.log(scrollRef)
+      const { scrollLeft, scrollLeftMax, scrollWidth, clientWidth, clientLeft, offsetLeft, offsetWidth } = scrollRef.current;
+      // console.log({
+      //   scrollLeft,
+      //   scrollLeftMax,
+      //   scrollWidth,
+      //   clientWidth,
+      //   clientLeft,
+      //   offsetLeft,
+      //   offsetWidth,
+      // });
 
       const isLeftScrollAvailable = scrollLeft !== 0;
-      const isRightScrollAvailable = scrollLeft !== scrollLeftMax;
+      const isRightScrollAvailableStable = scrollLeft !== scrollLeftMax;
+      const isRightScrollAvailable = scrollLeft + clientWidth !== scrollWidth;
 
       if (isLeftScrollAvailable !== isWaterTodayLeftScrollAvail) {
         setIsWaterTodayLeftScrollAvail(isLeftScrollAvailable);
@@ -239,7 +250,10 @@ function Dashboard() {
               plantsThatNeedWaterToday.length > 0 && (
                 <ul
                   className={`water-today ${isWaterTodayLeftScrollAvail && isWaterTodayRightScrollAvail ? 'both-available' : (isWaterTodayLeftScrollAvail ? 'left-available' : (isWaterTodayRightScrollAvail ? 'right-available' : ''))}`}
-                  onScroll={handleScroll}
+                  onScroll={(e) => {
+                    console.log(e)
+                    handleScroll()
+                  }}
                   ref={scrollRef}
                 >
                   {
