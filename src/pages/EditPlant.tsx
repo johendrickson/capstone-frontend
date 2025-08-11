@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, ChangeEvent, useRef, useCallback } from 'react';
 import axios from 'axios';
 import TagSelector from '../components/TagSelector';
 import { Tag } from '../pages/types';
@@ -8,6 +8,7 @@ import '../styles/EditPlant.css';
 import FooterBanner from '../components/FooterBanner';
 import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../constants/api';
+import { fetchPlantInfo } from '../api/gemini';
 
 interface Plant {
   id: number;
@@ -26,12 +27,14 @@ interface Plant {
 }
 
 const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
+const PLANT_DATA_ERROR_MSG = 'Failed to load plant data.';
 
 export default function EditPlant() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const scientificInputRef = useRef<HTMLInputElement>(null);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  const [isLoadingInitialData, setIsLoadingInitialData] = useState<boolean>(true);
 
   const [formData, setFormData] = useState<Plant | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
@@ -42,28 +45,47 @@ export default function EditPlant() {
 
   const [error, setError] = useState<string | null>(null);
 
-  const [searchScientific, setSearchScientific] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
-  const [hasSuggestionBeenSelected, setHasSuggestionBeenSelected] = useState(false);
-  const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
-  const [isAutofillLoading, setIsAutofillLoading] = useState(false);
+  useEffect(() => {
+    async function loadUserId() {
+      try {
+        const userId = localStorage.getItem('plantpal_user_id');
+        if (userId === null) throw new Error('null user ID');
+        const userIdInt = parseInt(userId);
+
+        setFormData((prev) => ({
+          id: formData?.id || 0,
+          is_outdoor: formData?.is_outdoor || true,
+          scientific_name: formData?.scientific_name || '',
+          tag_ids: formData?.tag_ids || [],
+          ...prev,
+          user_id: userIdInt,
+        }));
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load user ID.');
+      }
+    }
+    loadUserId();
+  }, []);
 
   const fetchPlant = useCallback(async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/user_plants/${id}`);
+
       const plant = {
         ...res.data.user_plant,
         ...res.data.user_plant.plant,
         tag_ids: res.data.user_plant.tag_ids || []
       };
+
       setFormData(plant);
       setDraftImageUrl(plant.image_url || '');
       setOriginalImageUrl(plant.image_url || '');
-      setSearchScientific(plant.scientific_name || '');
     } catch (err) {
       console.error(err);
-      setError('Failed to load plant data.');
+      setError(PLANT_DATA_ERROR_MSG);
+    } finally {
+      setIsLoadingInitialData(false);
     }
   }, [id]);
 
@@ -84,64 +106,31 @@ export default function EditPlant() {
     fetchTags();
   }, []);
 
-  useEffect(() => {
-    if (!searchScientific) {
-      setSuggestions([]);
-      return;
-    }
-
-    const delayDebounce = setTimeout(async () => {
-      try {
-        setIsSuggestionsLoading(true);
-        const res = await axios.get(
-          `${API_BASE_URL}/plants/suggest?partial_name=${encodeURIComponent(searchScientific)}`
-        );
-        setSuggestions(res.data.suggestions || []);
-        setIsSuggestionsLoading(false);
-      } catch (err) {
-        setIsSuggestionsLoading(false);
-        console.error('Error fetching suggestions', err);
-        setSuggestions([]);
-      }
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchScientific]);
-
   if (!formData) {
-    return <p>Loading plant data...</p>;
+    return (
+      <div className="EditPlant page">
+        <Header />
+
+        <main>
+          <HeadingWithSvg text="Edit Your Plant" />
+
+          <p>Loading plant data...</p>
+        </main>
+
+        <FooterBanner />
+      </div>
+    );
   }
-
-  const handleSelectSuggestion = (scientificName: string) => {
-    setSearchScientific(scientificName);
-    setSuggestions([]);
-    setFormData((prev) => (prev ? { ...prev, scientific_name: scientificName } : prev));
-  };
-
-  const handleBlurOrFocusOther = (e: React.FocusEvent<HTMLInputElement>) => {
-    const related = e.relatedTarget as Node | null;
-    if (related && suggestionsRef.current && suggestionsRef.current.contains(related)) {
-      return;
-    }
-    setSuggestions([]);
-    setIsSuggestionsLoading(false);
-  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const target = e.target as HTMLInputElement;
     const { name, value, type, checked } = target;
+
     setFormData((prev: Plant | null) =>
       prev ? { ...prev, [name]: type === 'checkbox' ? checked : value } : null
     );
-    if (name !== 'scientific_name') setSuggestions([]);
-  };
-
-  const handleScientificNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setFormData((prev) => (prev ? { ...prev, scientific_name: value } : prev));
-    setSearchScientific(value);
   };
 
   const handleTagChange = (selectedTagIds: number[]) => {
@@ -177,10 +166,12 @@ export default function EditPlant() {
 
   const handleAddTag = async (tagName: string) => {
     setError(null);
+
     try {
       const res = await axios.post(`${API_BASE_URL}/tags`, { name: tagName });
       const newTag: Tag = res.data.tag;
       setTags((prev) => [...prev, newTag]);
+
       if (formData) {
         setFormData({
           ...formData,
@@ -204,6 +195,7 @@ export default function EditPlant() {
     if (!file) return;
 
     const reader = new FileReader();
+
     reader.onloadend = () => {
       const result = reader.result as string;
       setDraftImageUrl(result);
@@ -250,6 +242,26 @@ export default function EditPlant() {
     }
   };
 
+  const fetchGeminiData = async (scientific_name: string) => {
+    const data = await fetchPlantInfo(scientific_name);
+
+    setFormData((prev) => ({
+      tag_ids: [],
+      id: data.id || 0,
+      user_id: data.user_id || 0,
+      scientific_name: data.scientific_name || '',
+      is_outdoor: data.is_outdoor || true,
+      ...prev,
+      common_name: data.common_name || "",
+      species: data.species || "",
+      preferred_soil_conditions: data.preferred_soil_conditions || "",
+      propagation_methods: data.propagation_methods || "",
+      edible_parts: data.edible_parts || "",
+      is_pet_safe: data.is_pet_safe ?? false,
+      image_url: data.image_url || '',
+    }));
+  };
+
   return (
     <div className="EditPlant page">
       <Header />
@@ -259,93 +271,77 @@ export default function EditPlant() {
 
         <form onSubmit={handleSubmit}>
           <div className="EditPlant image-scientific-container">
-            <div className="EditPlant plant-image-circle" title="Plant Image">
-              <img
-                src={formData.image_url || DEFAULT_PLANT_IMAGE}
-                alt="Plant"
-                className="EditPlant plant-image"
-              />
+            <div className={`image-edit ${isEditingImage ? '' : 'editing'}`}>
+              <div className='generic-and-button'>
+                <div className="EditPlant plant-image-circle" title="Plant Image">
+                  <img
+                    src={formData.image_url || DEFAULT_PLANT_IMAGE}
+                    alt="Plant"
+                    className="EditPlant plant-image"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="AddPlant edit-image-button"
+                  onClick={() => {
+                    if (!isEditingImage) {
+                      setOriginalImageUrl(formData.image_url || '');
+                    }
+                    setIsEditingImage(!isEditingImage);
+                  }}
+                >
+                  {isEditingImage ? 'Close Image Editor' : 'Edit Image'}
+                </button>
+              </div>
             </div>
 
-            <div className="EditPlant scientific-name-input-wrapper">
-              <label htmlFor="scientific_name">
-                Scientific Name{' '}
-                <span style={{ color: 'red', fontWeight: 'normal' }}>*Required</span>
-              </label>
+            {isEditingImage && (
+              <div className="EditPlant image-edit-controls">
+                <label htmlFor="image_url_input">Enter Image URL</label>
+                <input
+                  id="image_url_input"
+                  type="url"
+                  value={draftImageUrl}
+                  onChange={handleDraftImageUrlChange}
+                  placeholder="https://example.com/plant.jpg"
+                />
+
+                <label htmlFor="image_file_input">Or Upload an Image</label>
+                <input
+                  id="image_file_input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleDraftImageFileChange}
+                />
+
+                <div className="image-edit-buttons">
+                  <button type="button" onClick={handleSaveImageEdit}>
+                    Save
+                  </button>
+                  <button type="button" onClick={handleCancelImageEdit}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="EditPlant scientific-name-input-wrapper">
+            <label htmlFor="scientific_name">
+              Scientific Name{' '}
+            </label>
+            <div>
               <input
                 id="scientific_name"
                 type="text"
                 name="scientific_name"
-                value={searchScientific}
-                onChange={handleScientificNameChange}
+                value={formData.scientific_name}
+                onChange={handleChange}
                 autoComplete="off"
                 ref={scientificInputRef}
-                onBlur={handleBlurOrFocusOther}
               />
-
-              <button
-                type="button"
-                className="EditPlant edit-image-button"
-                onClick={() => {
-                  if (!isEditingImage) {
-                    setOriginalImageUrl(formData.image_url || '');
-                  }
-                  setIsEditingImage(!isEditingImage);
-                }}
-              >
-                {isEditingImage ? 'Close Image Editor' : 'Edit Image'}
-              </button>
+              <small style={{ color: 'red', fontWeight: 'normal' }}>*Required</small>
             </div>
-          </div>
-
-          {isEditingImage && (
-            <div className="EditPlant image-edit-controls">
-              <label htmlFor="image_url_input">Enter Image URL</label>
-              <input
-                id="image_url_input"
-                type="url"
-                value={draftImageUrl}
-                onChange={handleDraftImageUrlChange}
-                placeholder="https://example.com/plant.jpg"
-              />
-
-              <label htmlFor="image_file_input">Or Upload an Image</label>
-              <input
-                id="image_file_input"
-                type="file"
-                accept="image/*"
-                onChange={handleDraftImageFileChange}
-              />
-
-              <div className="image-edit-buttons">
-                <button type="button" onClick={handleSaveImageEdit}>
-                  Save
-                </button>
-                <button type="button" onClick={handleCancelImageEdit}>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="suggestions" ref={suggestionsRef}>
-            {isSuggestionsLoading && (
-              <span className="suggestions-info">Loading suggestions...</span>
-            )}
-            {suggestions.length > 0 && !isSuggestionsLoading && (
-              <>
-                <span className="suggestions-info">Suggestions:</span>
-                <ul>
-                  {suggestions.map((s) => (
-                    <li key={s}>
-                      <button type="button" onMouseDown={() => handleSelectSuggestion(s)}>
-                        {s}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
           </div>
 
           <label htmlFor="common_name">Common Name</label>
@@ -355,7 +351,9 @@ export default function EditPlant() {
             name="common_name"
             value={formData.common_name || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="species">Species</label>
@@ -365,7 +363,9 @@ export default function EditPlant() {
             name="species"
             value={formData.species || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="preferred_soil_conditions">Preferred Soil Conditions</label>
@@ -375,7 +375,9 @@ export default function EditPlant() {
             name="preferred_soil_conditions"
             value={formData.preferred_soil_conditions || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="propagation_methods">Propagation Methods</label>
@@ -385,7 +387,9 @@ export default function EditPlant() {
             name="propagation_methods"
             value={formData.propagation_methods || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="edible_parts">Edible Parts</label>
@@ -395,7 +399,9 @@ export default function EditPlant() {
             name="edible_parts"
             value={formData.edible_parts || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="planted_date">Planted Date</label>
@@ -405,7 +411,9 @@ export default function EditPlant() {
             name="planted_date"
             value={formData.planted_date || ''}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="is_outdoor">Outdoor?</label>
@@ -415,7 +423,9 @@ export default function EditPlant() {
             type="checkbox"
             checked={formData.is_outdoor || false}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <label htmlFor="is_pet_safe">Pet safe?</label>
@@ -425,7 +435,9 @@ export default function EditPlant() {
             type="checkbox"
             checked={formData.is_pet_safe || false}
             onChange={handleChange}
-            onFocus={() => setSuggestions([])}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <TagSelector
@@ -434,6 +446,9 @@ export default function EditPlant() {
             onChange={handleTagChange}
             onDeleteTag={handleDeleteTag}
             onAddTag={handleAddTag}
+            disabled={
+              isLoadingInitialData
+            }
           />
 
           <div className="bottom-buttons">
@@ -446,7 +461,25 @@ export default function EditPlant() {
             </button>
           </div>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          {error && (
+            <p style={{ color: 'red' }}>
+              {error}
+              {
+                error === PLANT_DATA_ERROR_MSG && (
+                  <>
+                    {' '}
+                    <button
+                      onClick={() => {
+                        fetchPlant();
+                      }}
+                    >
+                      retry
+                    </button>
+                  </>
+                )
+              }
+            </p>
+          )}
         </form>
 
         <p>Remember to review your changes carefully before saving.</p>

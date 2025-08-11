@@ -256,9 +256,9 @@ function Dashboard() {
               )
             }
             {
-              !loading && plants.length === 0 && (
+              !loading && plantsThatNeedWaterToday.length === 0 && (
                 <div>
-                  <p>No plants to water today. The only one you must keep hydrated is yourself. 😎</p>
+                  <p>No plants to water. The only one you must keep hydrated today is yourself. 😎</p>
                 </div>
               )
             }

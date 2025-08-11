@@ -14,6 +14,7 @@ interface TagSelectorProps {
   onChange: (tagIds: number[]) => void;
   onAddTag: (tagName: string) => void;
   onDeleteTag: (tagId: number) => void;
+  disabled?: boolean;
 }
 
 const TagSelector: React.FC<TagSelectorProps> = ({
@@ -22,6 +23,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   onChange,
   onAddTag,
   onDeleteTag,
+  disabled,
 }) => {
   // Map tags to options
   const options: OptionType[] = allTags.map(tag => ({
@@ -99,6 +101,7 @@ const TagSelector: React.FC<TagSelectorProps> = ({
         components={{ MultiValueLabel, MultiValueRemove }}
         placeholder="Type to add or select tags..."
         noOptionsMessage={() => 'Type to add new tag'}
+        isDisabled={disabled || false}
       />
     </div>
   );

@@ -115,7 +115,11 @@ export default function AddPlant() {
 
   useEffect(() => {
     const { scientific_name } = formData;
-    if (!scientific_name) return;
+
+    if (!scientific_name) {
+      setSuggestions([]);
+      return;
+    }
 
     const matchedPlant = plants.find(
       (p) => p.scientific_name.toLowerCase() === scientific_name.toLowerCase()
@@ -126,6 +130,8 @@ export default function AddPlant() {
         ...prev,
         ...matchedPlant,
       }));
+
+      setIsAutofillLoading(false);
     } else {
       fetchGeminiData(scientific_name)
         .then(() => {})
@@ -162,11 +168,13 @@ export default function AddPlant() {
     setSuggestions([]);
 
     const found = plants.find((p) => p.scientific_name === scientificName);
+
     if (found) {
       setFormData((prev) => ({
         ...prev,
         ...found,
       }));
+
       setDraftImageUrl(found.image_url || '');
     } else {
       try {
@@ -545,6 +553,7 @@ export default function AddPlant() {
             onChange={handleTagChange}
             onDeleteTag={handleDeleteTag}
             onAddTag={handleAddTag}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <div className="bottom-buttons">
