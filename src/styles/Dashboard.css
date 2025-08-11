@@ -34,14 +34,18 @@
 
 .Dashboard ul.water-today.both-available {
   background: linear-gradient(to right, #888, white 3%, white 97%, #888 100%);
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
 
 .Dashboard ul.water-today.right-available {
   background: linear-gradient(to right, white, white 97%, #888 100%);
+  border-right: 2px solid black;
 }
 
 .Dashboard ul.water-today.left-available {
   background: linear-gradient(to right, #888, white 3%, white 100%);
+  border-left: 2px solid black;
 }
 
 .Dashboard ul.water-today li {
