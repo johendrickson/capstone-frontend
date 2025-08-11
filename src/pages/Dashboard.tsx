@@ -175,6 +175,7 @@ function Dashboard() {
     const wateringSchedule = userPlant.watering_schedule;
 
     if (!wateringSchedule) return false;
+    if (!wateringSchedule.last_watered) return true;
 
     const lastWateredDate = new Date(wateringSchedule.last_watered);
     const nextWateredDay: number = lastWateredDate.getDay() + wateringSchedule.frequency_days;
