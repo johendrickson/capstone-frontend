@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
+import React, { useState, useEffect, ChangeEvent, useRef, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import TagSelector from '../components/TagSelector';
 import { Tag } from '../pages/types';
@@ -30,41 +30,46 @@ const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
 export default function EditPlant() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const scientificInputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  const [plantData, setPlantData] = useState<Plant | null>(null);
+  const [formData, setFormData] = useState<Plant | null>(null);
   const [tags, setTags] = useState<Tag[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isEditingImage, setIsEditingImage] = useState(false);
+
   const [draftImageUrl, setDraftImageUrl] = useState('');
   const [originalImageUrl, setOriginalImageUrl] = useState('');
+  const [isEditingImage, setIsEditingImage] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
 
   const [searchScientific, setSearchScientific] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const [hasSuggestionBeenSelected, setHasSuggestionBeenSelected] = useState(false);
+  const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
+  const [isAutofillLoading, setIsAutofillLoading] = useState(false);
+
+  const fetchPlant = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/user_plants/${id}`);
+      const plant = {
+        ...res.data.user_plant,
+        ...res.data.user_plant.plant,
+        tag_ids: res.data.user_plant.tag_ids || []
+      };
+      setFormData(plant);
+      setDraftImageUrl(plant.image_url || '');
+      setOriginalImageUrl(plant.image_url || '');
+      setSearchScientific(plant.scientific_name || '');
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load plant data.');
+    }
+  }, [id]);
 
   useEffect(() => {
-    async function fetchPlant() {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/user_plants/${id}`);
-        const plant = {
-          ...res.data.user_plant,
-          ...res.data.user_plant.plant,
-          tag_ids: res.data.user_plant.tag_ids || []
-        };
-        setPlantData(plant);
-        setDraftImageUrl(plant.image_url || '');
-        setOriginalImageUrl(plant.image_url || '');
-        setSearchScientific(plant.scientific_name || '');
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load plant data.');
-      }
-    }
     if (id) fetchPlant();
-  }, [id]);
+  }, [id, fetchPlant]);
 
   useEffect(() => {
     async function fetchTags() {
@@ -84,6 +89,7 @@ export default function EditPlant() {
       setSuggestions([]);
       return;
     }
+
     const delayDebounce = setTimeout(async () => {
       try {
         setIsSuggestionsLoading(true);
@@ -98,8 +104,19 @@ export default function EditPlant() {
         setSuggestions([]);
       }
     }, 300);
+
     return () => clearTimeout(delayDebounce);
   }, [searchScientific]);
+
+  if (!formData) {
+    return <p>Loading plant data...</p>;
+  }
+
+  const handleSelectSuggestion = (scientificName: string) => {
+    setSearchScientific(scientificName);
+    setSuggestions([]);
+    setFormData((prev) => (prev ? { ...prev, scientific_name: scientificName } : prev));
+  };
 
   const handleBlurOrFocusOther = (e: React.FocusEvent<HTMLInputElement>) => {
     const related = e.relatedTarget as Node | null;
@@ -110,16 +127,12 @@ export default function EditPlant() {
     setIsSuggestionsLoading(false);
   };
 
-  if (!plantData) {
-    return <p>Loading plant data...</p>;
-  }
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const target = e.target as HTMLInputElement;
     const { name, value, type, checked } = target;
-    setPlantData((prev: Plant | null) =>
+    setFormData((prev: Plant | null) =>
       prev ? { ...prev, [name]: type === 'checkbox' ? checked : value } : null
     );
     if (name !== 'scientific_name') setSuggestions([]);
@@ -127,19 +140,13 @@ export default function EditPlant() {
 
   const handleScientificNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setPlantData((prev) => (prev ? { ...prev, scientific_name: value } : prev));
+    setFormData((prev) => (prev ? { ...prev, scientific_name: value } : prev));
     setSearchScientific(value);
   };
 
-  const handleSelectSuggestion = (scientificName: string) => {
-    setSearchScientific(scientificName);
-    setSuggestions([]);
-    setPlantData((prev) => (prev ? { ...prev, scientific_name: scientificName } : prev));
-  };
-
   const handleTagChange = (selectedTagIds: number[]) => {
-    if (plantData) {
-      setPlantData({ ...plantData, tag_ids: selectedTagIds });
+    if (formData) {
+      setFormData({ ...formData, tag_ids: selectedTagIds });
     }
   };
 
@@ -156,10 +163,10 @@ export default function EditPlant() {
       await axios.delete(`${API_BASE_URL}/tags/${tagId}`);
       setTags((prev) => prev.filter((t) => t.id !== tagId));
 
-      if (plantData) {
-        setPlantData({
-          ...plantData,
-          tag_ids: plantData.tag_ids.filter((id: number) => id !== tagId),
+      if (formData) {
+        setFormData({
+          ...formData,
+          tag_ids: formData.tag_ids.filter((id: number) => id !== tagId),
         });
       }
     } catch (err) {
@@ -174,10 +181,10 @@ export default function EditPlant() {
       const res = await axios.post(`${API_BASE_URL}/tags`, { name: tagName });
       const newTag: Tag = res.data.tag;
       setTags((prev) => [...prev, newTag]);
-      if (plantData) {
-        setPlantData({
-          ...plantData,
-          tag_ids: [...plantData.tag_ids, newTag.id],
+      if (formData) {
+        setFormData({
+          ...formData,
+          tag_ids: [...formData.tag_ids, newTag.id],
         });
       }
     } catch (err) {
@@ -189,7 +196,7 @@ export default function EditPlant() {
   const handleDraftImageUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setDraftImageUrl(url);
-    if (plantData) setPlantData({ ...plantData, image_url: url });
+    if (formData) setFormData({ ...formData, image_url: url });
   };
 
   const handleDraftImageFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -200,7 +207,7 @@ export default function EditPlant() {
     reader.onloadend = () => {
       const result = reader.result as string;
       setDraftImageUrl(result);
-      if (plantData) setPlantData({ ...plantData, image_url: result });
+      if (formData) setFormData({ ...formData, image_url: result });
     };
     reader.readAsDataURL(file);
   };
@@ -211,17 +218,17 @@ export default function EditPlant() {
 
   const handleCancelImageEdit = () => {
     setDraftImageUrl(originalImageUrl);
-    if (plantData) setPlantData({ ...plantData, image_url: originalImageUrl });
+    if (formData) setFormData({ ...formData, image_url: originalImageUrl });
     setIsEditingImage(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!plantData) return;
+    if (!formData) return;
 
     try {
-      await axios.put(`${API_BASE_URL}/user_plants/${id}`, plantData);
+      await axios.put(`${API_BASE_URL}/user_plants/${id}`, formData);
       alert('Plant updated successfully!');
     } catch (err: any) {
       console.error(err);
@@ -254,7 +261,7 @@ export default function EditPlant() {
           <div className="EditPlant image-scientific-container">
             <div className="EditPlant plant-image-circle" title="Plant Image">
               <img
-                src={plantData.image_url || DEFAULT_PLANT_IMAGE}
+                src={formData.image_url || DEFAULT_PLANT_IMAGE}
                 alt="Plant"
                 className="EditPlant plant-image"
               />
@@ -281,7 +288,7 @@ export default function EditPlant() {
                 className="EditPlant edit-image-button"
                 onClick={() => {
                   if (!isEditingImage) {
-                    setOriginalImageUrl(plantData.image_url || '');
+                    setOriginalImageUrl(formData.image_url || '');
                   }
                   setIsEditingImage(!isEditingImage);
                 }}
@@ -346,7 +353,7 @@ export default function EditPlant() {
             id="common_name"
             type="text"
             name="common_name"
-            value={plantData.common_name || ''}
+            value={formData.common_name || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -356,7 +363,7 @@ export default function EditPlant() {
             id="species"
             type="text"
             name="species"
-            value={plantData.species || ''}
+            value={formData.species || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -366,7 +373,7 @@ export default function EditPlant() {
             id="preferred_soil_conditions"
             type="text"
             name="preferred_soil_conditions"
-            value={plantData.preferred_soil_conditions || ''}
+            value={formData.preferred_soil_conditions || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -376,7 +383,7 @@ export default function EditPlant() {
             id="propagation_methods"
             type="text"
             name="propagation_methods"
-            value={plantData.propagation_methods || ''}
+            value={formData.propagation_methods || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -386,7 +393,7 @@ export default function EditPlant() {
             id="edible_parts"
             type="text"
             name="edible_parts"
-            value={plantData.edible_parts || ''}
+            value={formData.edible_parts || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -396,7 +403,7 @@ export default function EditPlant() {
             id="planted_date"
             type="date"
             name="planted_date"
-            value={plantData.planted_date || ''}
+            value={formData.planted_date || ''}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -406,7 +413,7 @@ export default function EditPlant() {
             id="is_outdoor"
             name="is_outdoor"
             type="checkbox"
-            checked={plantData.is_outdoor || false}
+            checked={formData.is_outdoor || false}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
@@ -416,13 +423,13 @@ export default function EditPlant() {
             id="is_pet_safe"
             name="is_pet_safe"
             type="checkbox"
-            checked={plantData.is_pet_safe || false}
+            checked={formData.is_pet_safe || false}
             onChange={handleChange}
             onFocus={() => setSuggestions([])}
           />
 
           <TagSelector
-            selectedTagIds={plantData.tag_ids || []}
+            selectedTagIds={formData.tag_ids || []}
             allTags={tags}
             onChange={handleTagChange}
             onDeleteTag={handleDeleteTag}

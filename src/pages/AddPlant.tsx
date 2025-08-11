@@ -49,17 +49,20 @@ export default function AddPlant() {
     tag_ids: [],
   });
 
+  const [tags, setTags] = useState<Tag[]>([]);
+
   const [draftImageUrl, setDraftImageUrl] = useState(formData.image_url || '');
   const [originalImageUrl, setOriginalImageUrl] = useState('');
+  const [isEditingImage, setIsEditingImage] = useState(false);
+
+  const [error, setError] = useState<string | null>(null);
+
+  const [searchScientific, setSearchScientific] = useState('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [hasSuggestionBeenSelected, setHasSuggestionBeenSelected] = useState(false);
-  const [isAutofillLoading, setIsAutofillLoading] = useState(false);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [searchScientific, setSearchScientific] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
-  const [isEditingImage, setIsEditingImage] = useState(false);
+  const [isAutofillLoading, setIsAutofillLoading] = useState(false);
 
   async function fetchPlants() {
     try {
@@ -71,11 +74,48 @@ export default function AddPlant() {
     }
   }
 
+  useEffect(() => {
+    fetchPlants();
+  }, []);
+
+  useEffect(() => {
+    async function fetchTags() {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/tags`);
+        setTags(res.data.tags);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load tags.');
+      }
+    }
+    fetchTags();
+  }, []);
+
+  useEffect(() => {
+    if (!searchScientific) {
+      setSuggestions([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(async () => {
+      try {
+        setIsSuggestionsLoading(true);
+        const res = await fetchScientificNameSuggestions(searchScientific);
+        setSuggestions(res);
+      } catch (err) {
+        console.error('Error fetching suggestions', err);
+        setSuggestions([]);
+      } finally {
+        setIsSuggestionsLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchScientific]);
 
   useEffect(() => {
     const { scientific_name } = formData;
     if (!scientific_name) return;
-
 
     const matchedPlant = plants.find(
       (p) => p.scientific_name.toLowerCase() === scientific_name.toLowerCase()
@@ -114,45 +154,6 @@ export default function AddPlant() {
     }
     loadUserId();
   }, []);
-
-  useEffect(() => {
-    async function fetchTags() {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/tags`);
-        setTags(res.data.tags);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load tags.');
-      }
-    }
-    fetchTags();
-  }, []);
-
-  useEffect(() => {
-    fetchPlants();
-  }, []);
-
-  useEffect(() => {
-    if (!searchScientific) {
-      setSuggestions([]);
-      return;
-    }
-
-    const delayDebounce = setTimeout(async () => {
-      try {
-        setIsSuggestionsLoading(true);
-        const res = await fetchScientificNameSuggestions(searchScientific);
-        setSuggestions(res);
-      } catch (err) {
-        console.error('Error fetching suggestions', err);
-        setSuggestions([]);
-      } finally {
-        setIsSuggestionsLoading(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchScientific]);
 
   const handleSelectSuggestion = async (scientificName: string) => {
     setIsAutofillLoading(true);
@@ -194,6 +195,22 @@ export default function AddPlant() {
     }
   };
 
+  const handleAddTag = async (tagName: string) => {
+    try {
+      const res = await axios.post(`${API_BASE_URL}/tags`, { name: tagName });
+      const newTag: Tag = res.data.tag;
+      setTags((prev) => [...prev, newTag]);
+      setFormData((prev) => ({
+        ...prev,
+        tag_ids: [...prev.tag_ids, newTag.id],
+      }));
+    } catch (err) {
+      console.error('Failed to add new tag', err);
+      alert('Failed to add tag. Please try again.');
+    }
+  };
+
+
   const handleDraftImageUrlChange = (e: ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setDraftImageUrl(url);
@@ -225,21 +242,6 @@ export default function AddPlant() {
     } catch (err) {
       console.error('Failed to delete tag', err);
       alert('Failed to delete tag. Please try again.');
-    }
-  };
-
-  const handleAddTag = async (tagName: string) => {
-    try {
-      const res = await axios.post(`${API_BASE_URL}/tags`, { name: tagName });
-      const newTag: Tag = res.data.tag;
-      setTags((prev) => [...prev, newTag]);
-      setFormData((prev) => ({
-        ...prev,
-        tag_ids: [...prev.tag_ids, newTag.id],
-      }));
-    } catch (err) {
-      console.error('Failed to add new tag', err);
-      alert('Failed to add tag. Please try again.');
     }
   };
 
