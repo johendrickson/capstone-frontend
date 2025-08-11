@@ -89,8 +89,9 @@ const TagSelector: React.FC<TagSelectorProps> = ({
 
   return (
     <div className="tags-container">
-      <label>Tags</label>
+      <label htmlFor='tag-selector'>Tags</label>
       <CreatableSelect
+        id='tag-selector'
         isMulti
         options={options}
         value={selectedOptions}

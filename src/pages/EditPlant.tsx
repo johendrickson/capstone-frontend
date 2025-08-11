@@ -9,8 +9,6 @@ import FooterBanner from '../components/FooterBanner';
 import { useNavigate, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../constants/api';
 
-const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
-
 interface Plant {
   id: number;
   user_id: number;
@@ -26,6 +24,8 @@ interface Plant {
   image_url?: string;
   tag_ids: number[];
 }
+
+const DEFAULT_PLANT_IMAGE = '/assets/default-plant.svg';
 
 export default function EditPlant() {
   const { id } = useParams<{ id: string }>();

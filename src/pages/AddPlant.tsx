@@ -49,9 +49,33 @@ export default function AddPlant() {
     tag_ids: [],
   });
 
+  const [draftImageUrl, setDraftImageUrl] = useState(formData.image_url || '');
+  const [originalImageUrl, setOriginalImageUrl] = useState('');
+  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
+  const [hasSuggestionBeenSelected, setHasSuggestionBeenSelected] = useState(false);
+  const [isAutofillLoading, setIsAutofillLoading] = useState(false);
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [searchScientific, setSearchScientific] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [suggestionsError, setSuggestionsError] = useState<string | null>(null);
+  const [isEditingImage, setIsEditingImage] = useState(false);
+
+  async function fetchPlants() {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/plants`);
+      setPlants(res.data.plants);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load plants.');
+    }
+  }
+
+
   useEffect(() => {
     const { scientific_name } = formData;
     if (!scientific_name) return;
+
 
     const matchedPlant = plants.find(
       (p) => p.scientific_name.toLowerCase() === scientific_name.toLowerCase()
@@ -63,35 +87,14 @@ export default function AddPlant() {
         ...matchedPlant,
       }));
     } else {
-      const fetchGeminiData = async () => {
-        try {
-          const data = await fetchPlantInfo(scientific_name);
-          setFormData((prev) => ({
-            ...prev,
-            common_name: data.common_name || "",
-            species: data.species || "",
-            preferred_soil_conditions: data.preferred_soil_conditions || "",
-            propagation_methods: data.propagation_methods || "",
-            edible_parts: data.edible_parts || "",
-            is_pet_safe: data.is_pet_safe ?? false,
-            image_url: data.image_url || '',
-          }));
-        } catch (err) {
-          console.error("Gemini fetch failed:", err);
-        }
-      };
-      fetchGeminiData();
+      fetchGeminiData(scientific_name)
+        .then(() => {})
+        .catch((err) => {
+          console.error(err);
+          setSuggestionsError(err.message);
+        });
     }
-  }, [formData.scientific_name, plants]);
-
-  const [draftImageUrl, setDraftImageUrl] = useState(formData.image_url || '');
-  const [originalImageUrl, setOriginalImageUrl] = useState('');
-  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [searchScientific, setSearchScientific] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isEditingImage, setIsEditingImage] = useState(false);
+  }, [formData.scientific_name]);
 
   useEffect(() => {
     setDraftImageUrl(formData.image_url || '');
@@ -126,15 +129,6 @@ export default function AddPlant() {
   }, []);
 
   useEffect(() => {
-    async function fetchPlants() {
-      try {
-        const res = await axios.get(`${API_BASE_URL}/plants`);
-        setPlants(res.data.plants);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load plants.');
-      }
-    }
     fetchPlants();
   }, []);
 
@@ -161,6 +155,8 @@ export default function AddPlant() {
   }, [searchScientific]);
 
   const handleSelectSuggestion = async (scientificName: string) => {
+    setIsAutofillLoading(true);
+    setHasSuggestionBeenSelected(true);
     setSearchScientific(scientificName);
     setSuggestions([]);
 
@@ -187,10 +183,13 @@ export default function AddPlant() {
           image_url: aiData.image_url || '',
         }));
 
+        setIsAutofillLoading(false);
+
         if (aiData.image_url) setDraftImageUrl(aiData.image_url);
       } catch (err) {
         console.error('Error fetching AI data:', err);
         setFormData((prev) => ({ ...prev, scientific_name: scientificName }));
+        setIsAutofillLoading(false);
       }
     }
   };
@@ -281,6 +280,22 @@ export default function AddPlant() {
     }
   };
 
+  const fetchGeminiData = async (scientific_name: string) => {
+    const data = await fetchPlantInfo(scientific_name);
+
+    setFormData((prev) => ({
+      ...prev,
+      common_name: data.common_name || "",
+      species: data.species || "",
+      preferred_soil_conditions: data.preferred_soil_conditions || "",
+      propagation_methods: data.propagation_methods || "",
+      edible_parts: data.edible_parts || "",
+      is_pet_safe: data.is_pet_safe ?? false,
+      image_url: data.image_url || '',
+    }));
+  };
+
+
   return (
     <div className="AddPlant page">
       <Header />
@@ -290,97 +305,125 @@ export default function AddPlant() {
 
         <form onSubmit={handleSubmit}>
           <div className="AddPlant image-scientific-container">
-            <div className="AddPlant plant-image-circle" title="Plant Image">
-              <img
-                src={formData.image_url || DEFAULT_PLANT_IMAGE}
-                alt="Plant"
-                className="AddPlant plant-image"
-              />
+            <div className={`image-edit ${isEditingImage ? '' : 'editing'}`}>
+              <div className='generic-and-button'>
+                <div className="AddPlant plant-image-circle" title="Plant Image">
+                  <img
+                    src={formData.image_url || DEFAULT_PLANT_IMAGE}
+                    alt="Plant"
+                    className="AddPlant plant-image"
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="AddPlant edit-image-button"
+                  onClick={() => {
+                    if (!isEditingImage) {
+                      setOriginalImageUrl(formData.image_url || '');
+                    }
+                    setIsEditingImage(!isEditingImage);
+                  }}
+                >
+                  {isEditingImage ? 'Close Image Editor' : 'Edit Image'}
+                </button>
+              </div>
             </div>
 
-            <div className="AddPlant scientific-name-input-wrapper">
-              <label htmlFor="scientific_name">
-                Scientific Name{' '}
-                <span style={{ color: 'red', fontWeight: 'normal' }}>*Required</span>
-              </label>
+            {isEditingImage && (
+              <div className="AddPlant image-edit-controls">
+                <label htmlFor="image_url_input">Enter Image URL</label>
+                <input
+                  id="image_url_input"
+                  type="url"
+                  value={draftImageUrl}
+                  onChange={(e) => setFormData({
+                    ...formData,
+                    image_url: e.target.value,
+                  })}
+                  placeholder="https://example.com/plant.jpg"
+                />
+
+                <label htmlFor="image_file_input">Or Upload an Image</label>
+                <input
+                  id="image_file_input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleDraftImageFileChange}
+                />
+
+                <div className="image-edit-buttons">
+                  <button type="button" onClick={handleSaveImageEdit}>
+                    Save
+                  </button>
+                  <button type="button" onClick={handleCancelImageEdit}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="AddPlant scientific-name-input-wrapper">
+            <label htmlFor="scientific_name">
+              Scientific Name
+            </label>
+            <div>
               <input
                 id="scientific_name"
                 type="text"
                 name="scientific_name"
                 value={searchScientific}
-                onChange={(e) => setSearchScientific(e.target.value)}
+                onChange={(e) => {
+                  setHasSuggestionBeenSelected(false);
+                  setSearchScientific(e.target.value);
+                }}
                 autoComplete="off"
                 ref={scientificInputRef}
                 // onBlur={handleBlurOrFocusOther}
               />
-
-              <button
-                type="button"
-                className="AddPlant edit-image-button"
-                onClick={() => {
-                  if (!isEditingImage) {
-                    setOriginalImageUrl(formData.image_url || '');
-                  }
-                  setIsEditingImage(!isEditingImage);
-                }}
-              >
-                {isEditingImage ? 'Close Image Editor' : 'Edit Image'}
-              </button>
+              <small style={{ color: 'red', fontWeight: 'normal' }}>*Required</small>
             </div>
           </div>
 
-          {isEditingImage && (
-            <div className="AddPlant image-edit-controls">
-              <label htmlFor="image_url_input">Enter Image URL</label>
-              <input
-                id="image_url_input"
-                type="url"
-                value={draftImageUrl}
-                onChange={(e) => setFormData({
-                  ...formData,
-                  image_url: e.target.value,
-                })}
-                placeholder="https://example.com/plant.jpg"
-              />
-
-              <label htmlFor="image_file_input">Or Upload an Image</label>
-              <input
-                id="image_file_input"
-                type="file"
-                accept="image/*"
-                onChange={handleDraftImageFileChange}
-              />
-
-              <div className="image-edit-buttons">
-                <button type="button" onClick={handleSaveImageEdit}>
-                  Save
-                </button>
-                <button type="button" onClick={handleCancelImageEdit}>
-                  Cancel
-                </button>
+          {
+            !hasSuggestionBeenSelected && (
+              <div className='suggestions-wrapper'>
+                <div></div>
+                <div className="suggestions" ref={suggestionsRef}>
+                  {isSuggestionsLoading && (
+                    <span className="suggestions-info">Loading suggestions...</span>
+                  )}
+                  {suggestionsError && (
+                    <p className='error-msg'>
+                      {suggestionsError}
+                    </p>
+                  )}
+                  {suggestions.length > 0 && !isSuggestionsLoading && (
+                    <>
+                      <span className="suggestions-info">Suggestions:</span>
+                      <ul>
+                        {suggestions.map((s) => (
+                          <li key={s}>
+                            <button type="button" onClick={() => handleSelectSuggestion(s)}>
+                              {s}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }
 
-          <div className="suggestions" ref={suggestionsRef}>
-            {isSuggestionsLoading && (
-              <span className="suggestions-info">Loading suggestions...</span>
-            )}
-            {suggestions.length > 0 && !isSuggestionsLoading && (
-              <>
-                <span className="suggestions-info">Suggestions:</span>
-                <ul>
-                  {suggestions.map((s) => (
-                    <li key={s}>
-                      <button type="button" onClick={() => handleSelectSuggestion(s)}>
-                        {s}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
+          {
+            isAutofillLoading && (
+              <p className='autofill-loading'>
+                A.I. is autofilling data to start you off...!
+              </p>
+            )
+          }
 
           <label htmlFor="common_name">Common Name</label>
           <input
@@ -393,6 +436,7 @@ export default function AddPlant() {
               common_name: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="species">Species</label>
@@ -406,6 +450,7 @@ export default function AddPlant() {
               species: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="preferred_soil_conditions">Preferred Soil Conditions</label>
@@ -419,6 +464,7 @@ export default function AddPlant() {
               preferred_soil_conditions: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="propagation_methods">Propagation Methods</label>
@@ -432,6 +478,7 @@ export default function AddPlant() {
               propagation_methods: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="edible_parts">Edible Parts</label>
@@ -445,6 +492,7 @@ export default function AddPlant() {
               edible_parts: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="planted_date">Planted Date</label>
@@ -458,6 +506,7 @@ export default function AddPlant() {
               planted_date: e.target.value,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="is_outdoor">Outdoor?</label>
@@ -471,6 +520,7 @@ export default function AddPlant() {
               is_outdoor: e.target.checked,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <label htmlFor="is_pet_safe">Pet safe?</label>
@@ -484,6 +534,7 @@ export default function AddPlant() {
               is_pet_safe: e.target.checked,
             })}
             onFocus={() => setSuggestions([])}
+            disabled={!hasSuggestionBeenSelected || isAutofillLoading}
           />
 
           <TagSelector
