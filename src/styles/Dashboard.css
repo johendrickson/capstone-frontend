@@ -1,3 +1,9 @@
+.Dashboard main {
+  margin: 2em auto;
+  max-width: min(62em, calc(100vw - 1em));
+  padding: 0 2em;
+}
+
 .Dashboard h1 {
   margin-bottom: 2rem;
 }
@@ -7,11 +13,23 @@
   margin-bottom: 1.3rem;
 }
 
+.Dashboard .welcome {
+  font-size: 1.2em;
+  line-height: 1.6;
+}
+
+.Dashboard .search-bar select,
+.Dashboard .search-bar input {
+  font-size: 1.1em;
+}
+
 .Dashboard .weather-section {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1rem;
+  font-size: 1.2em;
+  line-height: 1.2;
 }
 
 .Dashboard .weather-icon {
@@ -24,6 +42,7 @@
 }
 
 .Dashboard ul.water-today {
+  /* max-width: 90%; */
   padding: 1em;
   display: flex;
   flex-wrap: nowrap;
@@ -75,7 +94,7 @@
 
 .Dashboard .plant-gallery {
   margin-top: 3em;
-  max-width: 60em;
+  /* max-width: 60em; */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(8em, 10em));
   gap: 2em;

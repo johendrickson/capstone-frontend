@@ -1,5 +1,15 @@
+.watering-reminders-page h1 {
+  margin-bottom: 1em;
+}
+
 .watering-reminders-page h2 {
   margin-bottom: 2em;
+}
+
+.watering-reminders-page main {
+  margin: 2em auto;
+  max-width: 80em;
+  padding: 0 1em;
 }
 
 .watering-reminders-page .error-msg {
@@ -11,10 +21,19 @@
   text-align: center;
 }
 
+.watering-reminders-page .hydration {
+  font-size: 1.2em;
+}
+
 .watering-reminders-page .watering-can-icon {
   width: 100px;
   margin: 1rem auto;
   display: block;
+}
+
+.watering-reminders-page .center-toggle {
+  display: flex;
+  justify-content: center;
 }
 
 .watering-reminders-page .toggle-container {
@@ -120,11 +139,9 @@
   padding-bottom: 2rem;
 }
 
-.watering-reminders-page .user-plant-desc dl {
+.watering-reminders-page .user-plant-desc {
   display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 0.7em;
-  row-gap: 1em;
+  grid-template-columns: 1fr;
 }
 
 .watering-reminders-page .user-plant-desc img {
@@ -132,6 +149,10 @@
   aspect-ratio: 1;
   grid-column: span 2;
   border-radius: 1em;
+}
+
+.watering-reminders-page .user-plant-desc button {
+  margin-top: 1em;
 }
 
 .watering-reminders-page .user-plant-schedules ul {
@@ -154,10 +175,25 @@
   background-color: lightgray;
 }
 
+.watering-reminders-page .plant-name {
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+.watering-reminders-page select {
+  /* margin-left: 2em; */
+  margin-bottom: 2em;
+  font-size: 1.2em;
+  text-align: center;
+}
+
 .watering-reminders-page .new-watering-reminder {
+  min-width: 50em;
   margin-top: 3em;
   margin-bottom: 3em;
   padding: 3em;
+
+  text-align: center;
 
   background-color: whitesmoke;
 }

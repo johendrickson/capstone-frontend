@@ -146,6 +146,14 @@
   object-fit: cover;
 }
 
+.AddPlant .ai-info {
+  color: gray;
+  line-height: 1.2;
+  grid-column: span 2;
+  /* text-indent: 4ch; */
+  text-align: center;
+}
+
 /* Add Plant: Wrapper around scientific name input + autofill */
 .AddPlant .scientific-name-input-wrapper {
   grid-column: span 2;

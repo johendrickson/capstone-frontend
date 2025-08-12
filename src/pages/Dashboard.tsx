@@ -216,7 +216,7 @@ function Dashboard() {
       <Header />
       <main className="Dashboard-content">
         <HeadingWithSvg text={gardenName || "Dashboard"} />
-        <p>
+        <p className='welcome'>
           Welcome to your plant dashboard, {name || "Gardener"}! Manage your plants, explore care options, and help them thrive.
         </p>
 
@@ -280,7 +280,6 @@ function Dashboard() {
 
 
             <h2>Plants</h2>
-            <img src={gardenIcon} alt="Garden icon" className="garden-icon" />
 
             {/* 🔍 Search UI */}
             <div className="search-bar">

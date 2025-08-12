@@ -1,10 +1,10 @@
 import FooterBanner from "../components/FooterBanner";
 import Header from "../components/Header";
-import '../styles/About.css'; // You can keep using this file unless you want to rename it
+import '../styles/About.css';
 import HeadingWithSvg from "../components/HeadingWithSvg";
 
 function About() {
-  const backgroundUrl = '/assets/nature_glow.jpg'; // Ensure this image is in your public/assets folder
+  const backgroundUrl = '/assets/white_flowers.jpg';
 
   return (
     <div

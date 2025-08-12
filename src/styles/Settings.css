@@ -8,6 +8,11 @@
   row-gap: 0.7em;
 }
 
+.SettingsPage main {
+  margin: 2em auto;
+  max-width: 60em;
+}
+
 .SettingsPage small {
   color: #666;
   margin-bottom: 1rem;

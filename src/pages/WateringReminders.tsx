@@ -224,16 +224,20 @@ export default function WateringReminders() {
       <Header displaysPlantPalIcon={true} />
       <main>
         <HeadingWithSvg text="Watering Schedule" />
-        <p>Set up reminders to keep your plants hydrated and healthy.</p>
+        <p className='hydration'>
+          Set up reminders to keep your plants hydrated and healthy.
+        </p>
         <img src={wateringCanIcon} alt="Watering Can Icon" className="watering-can-icon" />
 
         {/* Toggle */}
-        <div className="toggle-container">
-          <label className="switch">
-            <input type="checkbox" checked={remindersActive} onChange={handleToggle} />
-            <span className="slider"></span>
-          </label>
-          <span className="toggle-status">{remindersActive ? 'Active' : 'Inactive'}</span>
+        <div className='center-toggle'>
+          <div className="toggle-container">
+            <label className="switch">
+              <input type="checkbox" checked={remindersActive} onChange={handleToggle} />
+              <span className="slider"></span>
+            </label>
+            <span className="toggle-status">{remindersActive ? 'Active' : 'Inactive'}</span>
+          </div>
         </div>
 
         {
@@ -266,7 +270,7 @@ export default function WateringReminders() {
           remindersActive && !isInitiallyLoadingSchedules && userPlantsWithNoReminders.length > 0 && (
             <div className='new-watering-reminder'>
               <form onSubmit={(e) => onNewReminderSubmit(e)}>
-                <h2>Add new watering reminder</h2>
+                <h2>Add a new watering reminder</h2>
 
                 <select
                   name="user_plant_id"
@@ -280,7 +284,7 @@ export default function WateringReminders() {
                     userPlantsWithNoReminders.map(userPlant => {
 
                       return (
-                        <option value={userPlant.id}>
+                        <option value={userPlant.id} key={`new-reminder-opt-${userPlant.id}`}>
                           {userPlant.plant.scientific_name}
                         </option>
                       );
@@ -345,45 +349,46 @@ export default function WateringReminders() {
                   <ul>
                     <li>
                       <div className='user-plant-desc'>
-                        <dl>
-                          <dt>Plant:</dt>
-                          <dd>{userPlant.plant.scientific_name}</dd>
+                        <div>
+                          <div className='plant-name'>{userPlant.plant.scientific_name}</div>
                           <img
                             src={userPlant.plant.image_url || defaultPlantIcon}
                             alt=''
                           />
-                        </dl>
-                        <button
-                          disabled={wateringFrequencies[stringId].isLoading}
-                          onClick={() => {
-                            setWateringFrequencies({
-                              ...wateringFrequencies,
-                              [stringId]: {
-                                ...wateringFrequencies[stringId],
-                                isLoading: true,
-                              },
-                            });
-
-                            axios.delete(`${API_BASE_URL}/watering_schedules/${wateringFreqDict.id}`)
-                              .then(() => {
-                                // refresh the page info
-                                setLastPullAttempt(new Date());
-                              })
-                              .catch((err) => {
+                          <div>
+                            <button
+                              disabled={wateringFrequencies[stringId].isLoading}
+                              onClick={() => {
                                 setWateringFrequencies({
                                   ...wateringFrequencies,
                                   [stringId]: {
                                     ...wateringFrequencies[stringId],
-                                    isLoading: false,
-                                    error: err.message,
+                                    isLoading: true,
                                   },
                                 });
-                              });
 
-                          }}
-                        >
-                          Remove reminder
-                        </button>
+                                axios.delete(`${API_BASE_URL}/watering_schedules/${wateringFreqDict.id}`)
+                                  .then(() => {
+                                    // refresh the page info
+                                    setLastPullAttempt(new Date());
+                                  })
+                                  .catch((err) => {
+                                    setWateringFrequencies({
+                                      ...wateringFrequencies,
+                                      [stringId]: {
+                                        ...wateringFrequencies[stringId],
+                                        isLoading: false,
+                                        error: err.message,
+                                      },
+                                    });
+                                  });
+
+                              }}
+                            >
+                              Remove reminder
+                            </button>
+                          </div>
+                        </div>
                       </div>
                       <div className='plant-water-freq-display'>
                         <div className={`reminder-tile ${wateringFreqDict.isLoading ? 'loading' : ''}`}>

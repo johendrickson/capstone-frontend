@@ -1,3 +1,39 @@
+/* .LoginPage h1,
+.LoginPage label,
+.LoginPage span,
+.LoginPage a {
+    color: white;
+}
+
+.LoginPage input[type="submit"] {
+    background-color: darkgreen;
+    color: white;
+} */
+
+.LoginPage main > div {
+    display: flex;
+    justify-content: center;
+}
+
+.LoginPage svg {
+    fill: rgb(36, 133, 36);
+}
+
+.LoginPage main a {
+    color: rgb(36, 133, 36);
+}
+
+.LoginPage input[type="submit"] {
+    background-color: rgb(36, 133, 36);
+    color: white;
+}
+
+.LoginPage .white-bg {
+    background-color: rgba(265, 265, 265, 0.3);
+    padding: 2em;
+    border-radius: 1em;
+}
+
 .LoginPage .login-or-create > span {
     display: block;
 }

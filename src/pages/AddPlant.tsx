@@ -564,11 +564,12 @@ export default function AddPlant() {
           </div>
 
           {error && <p style={{ color: 'red' }}>{error}</p>}
-        </form>
 
-        <p>
-          Plant Pal uses AI to make adding plants faster, but we recommend checking the generated info for accuracy.
-        </p>
+          <p className='ai-info'>
+            Plant Pal uses AI to make adding plants faster, but we recommend checking the generated info for accuracy.
+          </p>
+
+        </form>
       </main>
 
       <FooterBanner />

@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import '../styles/HomePage.css';
 
 export default function HomePage() {
-  const backgroundUrl = '/assets/sunlit-branch';
+  const backgroundUrl = '/assets/sunlit-branch.jpg';
 
   return (
     <div

@@ -4,7 +4,7 @@ import '../styles/GettingStarted.css';
 import HeadingWithSvg from "../components/HeadingWithSvg";
 
 function GettingStarted() {
-  const backgroundUrl = '/assets/nature_glow.jpg'; // Ensure this image is in your public/assets folder
+  const backgroundUrl = '/assets/red_flowers.jpg';
 
   return (
     <div
@@ -27,7 +27,6 @@ function GettingStarted() {
             <li>
               <strong>Add Your First Plant</strong><br />
               Once logged in, click “Add Plant” from your dashboard. Start typing the scientific name of your plant — Plant Pal will suggest matches to help autofill details like watering needs and light preferences.<br />
-              <em>Pro tip: Using the scientific name gives you the most accurate care info, but don’t worry, we’ll guide you through it!</em>
             </li>
 
             <li>

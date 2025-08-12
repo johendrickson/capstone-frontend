@@ -33,7 +33,7 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/about', label: 'About' },
       { path: '/login', label: 'Login' },
     ];
-  } else if (isLoggedIn) {
+  } else if (isLoggedIn && currentPath === '/dashboard') {
     // Any other logged-in page (e.g., dashboard/settings/etc)
     navLinks = [
       { path: '/', label: 'Home' },
@@ -43,12 +43,31 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/settings', label: 'Settings' },
       { path: '/logout', label: 'Logout' },
     ];
+  } else if (isLoggedIn && currentPath === '/getting-started') {
+    // Any other logged-in page (e.g., dashboard/settings/etc)
+    navLinks = [
+      { path: '/', label: 'Home' },
+      { path: '/about', label: 'About' },
+      { path: '/dashboard', label: 'Dashboard' },
+      { path: '/logout', label: 'Logout' },
+    ];
+
+  } else if (isLoggedIn && currentPath === '/about') {
+    // Any other logged-in page (e.g., dashboard/settings/etc)
+    navLinks = [
+      { path: '/', label: 'Home' },
+      { path: '/getting-started', label: 'Getting Started' },
+      { path: '/dashboard', label: 'Dashboard' },
+      { path: '/logout', label: 'Logout' },
+    ];
+
   } else {
     // Fallback for any other page (not logged in)
     navLinks = [
       { path: '/', label: 'Home' },
       { path: '/getting-started', label: 'Getting Started' },
       { path: '/about', label: 'About' },
+      { path: '/login', label: 'Login' },
     ];
   }
 

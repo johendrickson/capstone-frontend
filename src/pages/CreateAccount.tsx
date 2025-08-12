@@ -6,6 +6,9 @@ import Header from '../components/Header';
 import '../styles/CreateAccount.css';
 import { API_BASE_URL } from '../constants/api';
 
+  const backgroundUrl = '/assets/sunny_far_flowers.jpg';
+  const bgImgStyles = { backgroundImage: `url(${backgroundUrl})` };
+
 function CreateAccountPage() {
   const navigate = useNavigate();
 
@@ -60,61 +63,66 @@ function CreateAccountPage() {
   };
 
   return (
-    <div className="CreateAccountPage page">
+    <div style={bgImgStyles} className="CreateAccountPage page">
       <Header />
 
       <main>
-        <HeadingWithSvg text="Create your account" />
+        <div>
+          <div className='white-bg'>
 
-        <form onSubmit={handleSubmit}>
-          <div className="fields">
-            <label htmlFor="new-account-name">Name</label>
-            <input
-              id="new-account-name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
+            <HeadingWithSvg text="Create Your Account" />
 
-            <label htmlFor="new-account-email">E-mail</label>
-            <input
-              id="new-account-email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <form onSubmit={handleSubmit}>
+              <div className="fields">
+                <label htmlFor="new-account-name">Name</label>
+                <input
+                  id="new-account-name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                />
 
-            <label htmlFor="new-account-zip-code">Zip code</label>
-            <input
-              id="new-account-zip-code"
-              name="zip_code"
-              type="text"
-              value={formData.zip_code}
-              onChange={handleChange}
-              required
-            />
+                <label htmlFor="new-account-email">E-mail</label>
+                <input
+                  id="new-account-email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
 
-            <label htmlFor="new-account-garden-name">Garden name</label>
-            <input
-              id="new-account-garden-name"
-              name="garden_name"
-              type="text"
-              value={formData.garden_name}
-              onChange={handleChange}
-              placeholder="Your Garden"
-            />
+                <label htmlFor="new-account-zip-code">Zip code</label>
+                <input
+                  id="new-account-zip-code"
+                  name="zip_code"
+                  type="text"
+                  value={formData.zip_code}
+                  onChange={handleChange}
+                  required
+                />
+
+                <label htmlFor="new-account-garden-name">Garden name</label>
+                <input
+                  id="new-account-garden-name"
+                  name="garden_name"
+                  type="text"
+                  value={formData.garden_name}
+                  onChange={handleChange}
+                  placeholder="Your Garden"
+                />
+              </div>
+
+              {errorMessage && <p className="error">{errorMessage}</p>}
+
+              <div className="submit-button">
+                <input type="submit" value="Create" />
+              </div>
+            </form>
           </div>
-
-          {errorMessage && <p className="error">{errorMessage}</p>}
-
-          <div className="submit-button">
-            <input type="submit" value="Create" />
-          </div>
-        </form>
+        </div>
       </main>
 
       <FooterBanner />
