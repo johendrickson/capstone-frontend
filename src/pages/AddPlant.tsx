@@ -189,12 +189,10 @@ export default function AddPlant() {
           propagation_methods: aiData.propagation_methods || '',
           edible_parts: aiData.edible_parts || '',
           is_pet_safe: aiData.is_pet_safe || false,
-          image_url: aiData.image_url ? aiData.image_url : prev.image_url,
         }));
 
         setIsAutofillLoading(false);
 
-        if (aiData.image_url) setDraftImageUrl(aiData.image_url);
       } catch (err) {
         console.error('Error fetching AI data:', err);
         setFormData((prev) => ({ ...prev, scientific_name: scientificName }));
@@ -301,7 +299,6 @@ export default function AddPlant() {
       propagation_methods: data.propagation_methods || "",
       edible_parts: data.edible_parts || "",
       is_pet_safe: data.is_pet_safe ?? false,
-      image_url: data.image_url ? data.image_url : prev.image_url,
     }));
   };
 
