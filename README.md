@@ -4,7 +4,7 @@ This is the frontend application for **Plant Pal**, my Ada Developers Academy ca
 
 Built with React, TypeScript, and React Router, it provides the user interface for managing plants, viewing weather alerts, and interacting with AI-generated plant data.
 
-- **Main Capstone Repository:** [Plant Pal Main - Project Scope + Information](https://github.com/johendrickson/capstone)
+- **Main Capstone Repository:** [Plant Pal Main – Project Scope + Information](https://github.com/johendrickson/capstone)
 - **Backend Repository:** [Plant Pal Backend – Flask API and database services](https://github.com/johendrickson/capstone-backend)
 
 ---
