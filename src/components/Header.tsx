@@ -11,6 +11,14 @@ function Header({ displaysPlantPalIcon = true }) {
 
   let navLinks;
 
+  const loggedInFullMenuPages = [
+  '/dashboard',
+  '/watering-reminders',
+  '/weather-alerts',
+  '/settings',
+  // add any other logged-in-only pages you want full nav on
+];
+
   if (currentPath === '/login') {
     // On login page
     navLinks = [
@@ -18,6 +26,7 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/getting-started', label: 'Getting Started' },
       { path: '/about', label: 'About' },
     ];
+
   } else if (currentPath === '/' && isLoggedIn) {
     // Home page, user logged in
     navLinks = [
@@ -26,6 +35,7 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/dashboard', label: 'Dashboard' },
       { path: '/logout', label: 'Logout' },
     ];
+
   } else if (currentPath === '/') {
     // Home page, not logged in
     navLinks = [
@@ -33,16 +43,17 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/about', label: 'About' },
       { path: '/login', label: 'Login' },
     ];
-  } else if (isLoggedIn && currentPath === '/dashboard') {
-    // Any other logged-in page (e.g., dashboard/settings/etc)
-    navLinks = [
-      { path: '/', label: 'Home' },
-      { path: '/dashboard', label: 'Dashboard' },
-      { path: '/watering-reminders', label: 'Watering Reminders' },
-      { path: '/weather-alerts', label: 'Weather Alerts' },
-      { path: '/settings', label: 'Settings' },
-      { path: '/logout', label: 'Logout' },
+
+  } else if (isLoggedIn && loggedInFullMenuPages.includes(currentPath)) {
+  navLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/watering-reminders', label: 'Watering Reminders' },
+    { path: '/weather-alerts', label: 'Weather Alerts' },
+    { path: '/settings', label: 'Settings' },
+    { path: '/logout', label: 'Logout' },
     ];
+
   } else if (isLoggedIn && currentPath === '/getting-started') {
     // Any other logged-in page (e.g., dashboard/settings/etc)
     navLinks = [
