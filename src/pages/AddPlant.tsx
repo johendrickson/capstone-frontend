@@ -189,7 +189,7 @@ export default function AddPlant() {
           propagation_methods: aiData.propagation_methods || '',
           edible_parts: aiData.edible_parts || '',
           is_pet_safe: aiData.is_pet_safe || false,
-          image_url: aiData.image_url || '',
+          image_url: aiData.image_url ? aiData.image_url : prev.image_url,
         }));
 
         setIsAutofillLoading(false);
@@ -301,7 +301,7 @@ export default function AddPlant() {
       propagation_methods: data.propagation_methods || "",
       edible_parts: data.edible_parts || "",
       is_pet_safe: data.is_pet_safe ?? false,
-      image_url: data.image_url || '',
+      image_url: data.image_url ? data.image_url : prev.image_url,
     }));
   };
 

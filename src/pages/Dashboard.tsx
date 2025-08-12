@@ -106,7 +106,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (userId && (!localStorage.getItem("plantpal_user_name") || !localStorage.getItem("plantpal_garden_name"))) {
+        if (userId) {
           const user = await getUserProfile(parseInt(userId));
           if (user.name) {
             localStorage.setItem("plantpal_user_name", user.name);
