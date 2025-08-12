@@ -71,6 +71,7 @@
   display: grid;
   grid-template-columns: 8em;
   grid-template-rows: auto auto;
+  text-align: center;
 }
 
 .Dashboard ul.water-today li img {

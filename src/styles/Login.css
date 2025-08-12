@@ -1,14 +1,8 @@
-/* .LoginPage h1,
-.LoginPage label,
-.LoginPage span,
-.LoginPage a {
-    color: white;
+.LoginPage.page {
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
-
-.LoginPage input[type="submit"] {
-    background-color: darkgreen;
-    color: white;
-} */
 
 .LoginPage main > div {
     display: flex;
