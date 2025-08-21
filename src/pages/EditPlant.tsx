@@ -75,7 +75,12 @@ export default function EditPlant() {
       const plant = {
         ...res.data.user_plant,
         ...res.data.user_plant.plant,
-        tag_ids: res.data.user_plant.tag_ids || []
+        planted_date: res.data.user_plant.planted_date
+          ? res.data.user_plant.planted_date.split('T')[0]
+          : '',
+        tag_ids: res.data.user_plant.tag_ids
+          || res.data.user_plant.tags?.map((t: any) => t.id)
+          || []
       };
 
       setFormData(plant);
