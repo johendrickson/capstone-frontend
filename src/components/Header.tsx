@@ -72,6 +72,17 @@ function Header({ displaysPlantPalIcon = true }) {
       { path: '/logout', label: 'Logout' },
     ];
 
+  } else if (isLoggedIn && !['/', '/login', '/about', '/getting-started'].includes(currentPath)) {
+    // Catch-all: any other logged-in page should show full nav
+    navLinks = [
+      { path: '/', label: 'Home' },
+      { path: '/dashboard', label: 'Dashboard' },
+      { path: '/watering-reminders', label: 'Watering Reminders' },
+      { path: '/weather-alerts', label: 'Weather Alerts' },
+      { path: '/settings', label: 'Settings' },
+      { path: '/logout', label: 'Logout' },
+    ];
+
   } else {
     // Fallback for any other page (not logged in)
     navLinks = [
